@@ -1,12 +1,41 @@
-<div class="card mb-4 shadow-sm">
+<div class="container mt-4">
+  <!-- Cover Image -->
   <% if @entity.cover_photo.attached? %>
-    <%= image_tag @entity.cover_photo, class: "card-img-top" %>
+    <%= image_tag @entity.cover_photo, class: "img-fluid rounded mb-4 w-100" %>
   <% end %>
-  <div class="card-body text-center">
+
+  <!-- Profile Image and Name -->
+  <div class="text-center">
     <% if @entity.profile_image.attached? %>
       <%= image_tag @entity.profile_image.variant(resize_to_fill: [100, 100]), class: "rounded-circle mb-2" %>
     <% end %>
-    <h2 class="card-title"><%= @entity.full_name %></h2>
-    <!-- Add follow button and trustworthiness rating here -->
+    <h2><%= @entity.full_name %></h2>
   </div>
+
+  <!-- Star Rating Form -->
+  <h5 class="text-center mt-4">Rate this Entity:</h5>
+
+  <%= form_with(model: [@entity, @entity.ratings.find_or_initialize_by(user: current_user)], local: true) do |f| %>
+    <div class="form-group text-center">
+      <%= f.label :stars, "Stars (1-5)" %>
+      <%= f.select :stars, options_for_select((1..5).to_a, f.object.stars), {}, class: "form-control mb-2" %>
+      <%= f.submit "Submit Rating", class: "btn btn-success" %>
+    </div>
+  <% end %>
+  
+
+  <!-- Rating Summary -->
+  <h5 class="text-center mt-4">Rating Summary:</h5>
+  <p class="text-center">
+    Average Rating: <%= @entity.average_rating || "No ratings yet" %> / 5
+  </p>
+  <p class="text-center">
+    Total Votes: <%= @entity.ratings.count %>
+  </p>
+
+  <ul class="list-unstyled text-center">
+    <% (1..5).each do |star| %>
+      <li><%= star %> Star: <%= @entity.rating_distribution[star] || 0 %> votes</li>
+    <% end %>
+  </ul>
 </div>

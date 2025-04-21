@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_21_124332) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_21_140045) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -82,6 +82,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_124332) do
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
+  create_table "ratings", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "entity_id", null: false
+    t.integer "stars"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_id"], name: "index_ratings_on_entity_id"
+    t.index ["user_id"], name: "index_ratings_on_user_id"
+  end
+
   create_table "replies", force: :cascade do |t|
     t.text "content"
     t.integer "user_id", null: false
@@ -113,6 +123,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_124332) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "likes", "users"
   add_foreign_key "posts", "users"
+  add_foreign_key "ratings", "entities"
+  add_foreign_key "ratings", "users"
   add_foreign_key "replies", "posts"
   add_foreign_key "replies", "users"
 end

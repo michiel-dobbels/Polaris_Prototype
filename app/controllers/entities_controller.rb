@@ -30,5 +30,12 @@ class EntitiesController < ApplicationController
     def entity_params
       params.require(:entity).permit(:full_name, :profile_image, :cover_photo)
     end
+
+    def show
+        @entity = Entity.find(params[:id])
+        @rating = @entity.ratings.find_or_initialize_by(user: current_user)
+    end
+      
+      
   end
   

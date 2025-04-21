@@ -36,4 +36,7 @@ Rails.application.routes.draw do
 
   resources :entities, only: [:index, :new, :create, :show]
 
+  resources :entities do
+    resources :ratings, only: [:create, :update]
+  end
 end
