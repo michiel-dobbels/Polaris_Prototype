@@ -1,0 +1,12 @@
+<div class="card mb-4 shadow-sm">
+  <% if @entity.cover_photo.attached? %>
+    <%= image_tag @entity.cover_photo, class: "card-img-top" %>
+  <% end %>
+  <div class="card-body text-center">
+    <% if @entity.profile_image.attached? %>
+      <%= image_tag @entity.profile_image.variant(resize_to_fill: [100, 100]), class: "rounded-circle mb-2" %>
+    <% end %>
+    <h2 class="card-title"><%= @entity.full_name %></h2>
+    <!-- Add follow button and trustworthiness rating here -->
+  </div>
+</div>

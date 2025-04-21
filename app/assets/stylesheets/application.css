@@ -224,3 +224,7 @@
 .has-youtube iframe {
   height: 450px; /* Increase this from 315px or whatever you had */
 }
+
+.card-body {
+  position: relative;
+}

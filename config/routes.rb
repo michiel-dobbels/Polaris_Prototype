@@ -34,5 +34,6 @@ Rails.application.routes.draw do
   get 'search', to: 'search#index'
 
 
+  resources :entities, only: [:index, :new, :create, :show]
 
 end
