@@ -1,0 +1,114 @@
+<div class="container mt-4">
+
+  <!-- Cover Image -->
+  <% if @entity.cover_photo.attached? %>
+    <%= image_tag @entity.cover_photo, class: 'img-fluid rounded mb-4 w-100' %>
+  <% end %>
+
+  <!-- Profile Image and Name -->
+  <div class="text-center">
+    <% if @entity.profile_image.attached? %>
+      <%= image_tag @entity.profile_image.variant(resize_to_fill: [100, 100]), class: 'rounded-circle mb-2' %>
+    <% end %>
+    <h2><%= @entity.full_name %></h2>
+  </div>
+
+  <!-- Review Toggle -->
+  
+  <div class="d-flex justify-content-center mt-4 mb-4">
+    <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#reviewCollapse">
+      Leave a review
+      <i class="fas fa-chevron-down"></i>
+    </button>
+  </div>
+
+
+  <!-- Collapsible Review Form -->
+  <div class="collapse" id="reviewCollapse">
+    <div class="card card-body mb-4">
+      <!-- Star Rating -->
+      <h5 class="text-center mt-2">Rate this Entity:</h5>
+      <div class="star-rating d-flex justify-content-center mb-3" id="rating-form">
+        <% (1..5).each do |star| %>
+          <span class="star" data-value="<%= star %>">&#9733;</span>
+        <% end %>
+      </div>
+
+      <!-- Form -->
+      <%= form_with(model: [@entity, @rating], local: false, html: { id: 'rating-form-hidden' }) do |f| %>
+        <%= f.hidden_field :stars, id: 'rating-stars', value: @rating.stars || 0 %>
+        <div class="mb-3">
+          <%= f.text_area :review, placeholder: "Optional review...", class: "form-control", rows: 3 %>
+        </div>
+        <%= f.submit 'Submit Rating', class: 'btn btn-success' %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Rating Summary -->
+  <!-- Rating Summary -->
+  <h5 class="text-center mt-4">Rating Summary:</h5>
+
+  <div class="d-flex justify-content-center align-items-center mb-2">
+    <% average = @entity.average_rating || 0 %>
+    <% full_stars = average.floor %>
+    <% half_star = (average - full_stars >= 0.25 && average - full_stars < 0.75) %>
+    <% extra_full_star = (average - full_stars >= 0.75) %>
+    <% total_full_stars = full_stars + (extra_full_star ? 1 : 0) %>
+
+    <% total_full_stars.times do %>
+      <i class="fa fa-star text-warning"></i>
+    <% end %>
+
+    <% if half_star %>
+      <i class="fa fa-star-half-alt text-warning"></i>
+    <% end %>
+
+    <% (5 - total_full_stars - (half_star ? 1 : 0)).times do %>
+      <i class="fa fa-star text-secondary"></i>
+    <% end %>
+
+    <div class="ms-2 fw-bold"><%= average.round(1) %></div>
+  </div>
+
+  <div class="text-center">
+    <small>Total Votes: <%= @entity.ratings.count %></small>
+  </div>
+
+  <% rating_distribution = @entity.rating_distribution %>
+  <ul class="list-unstyled text-center mt-2">
+    <% (1..5).each do |star| %>
+      <li><%= star %> Star: <%= rating_distribution[star] || 0 %> votes</li>
+    <% end %>
+  </ul>
+
+
+  <!-- Reviews Section -->
+  <% if @entity.ratings.where.not(review: [nil, ""]).exists? %>
+    <div class="mt-4">
+      <h5>Reviews</h5>
+      <% @entity.ratings.where.not(review: [nil, ""]).order(created_at: :desc).each do |rating| %>
+        <div class="card mb-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong><%= rating.user.full_name %></strong>
+              <small class="text-muted"><%= rating.created_at.strftime("%b %d, %Y") %></small>
+            </div>
+            <p class="mb-2"><%= rating.review %></p>
+            <div>
+              <% rating.stars.times do %>
+                <i class="fa fa-star text-warning"></i>
+              <% end %>
+              <% (5 - rating.stars).times do %>
+                <i class="fa fa-star text-secondary"></i>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+
+
+</div>
