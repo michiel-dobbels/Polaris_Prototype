@@ -1,5 +1,7 @@
 import "@hotwired/turbo-rails"
 import Rails from "@rails/ujs"
+import "bootstrap"
+
 
 Rails.start()
 
@@ -169,4 +171,22 @@ document.addEventListener('shown.bs.collapse', function (event) {
       });
     });
   }
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const tabs = document.querySelectorAll('#entityTabs .nav-link');
+
+  const lastTab = localStorage.getItem("lastEntityTab");
+  if (lastTab) {
+    const triggerEl = document.querySelector(`#entityTabs .nav-link[href="#${lastTab}"]`);
+    if (triggerEl) new bootstrap.Tab(triggerEl).show();
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", function () {
+      const tabId = this.getAttribute("href").substring(1);
+      localStorage.setItem("lastEntityTab", tabId);
+    });
+  });
 });
